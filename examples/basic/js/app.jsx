@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ScrollArea from '../../src/js/components/scroll-area';
+import ScrollArea from '../../../src/js/components/scroll-area';
 
 class App extends React.Component{
   constructor(props){
@@ -25,7 +25,7 @@ class App extends React.Component{
 
     return (
       <div className='area'>
-        <ScrollArea className='area' contentClassName='content'>
+        <ScrollArea>
           <div className='content'>
             {itemElements}
           </div>

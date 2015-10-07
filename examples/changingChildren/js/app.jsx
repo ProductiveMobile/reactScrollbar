@@ -19,7 +19,7 @@ class App extends React.Component{
     render() {
         return (
             <div>
-                <ScrollArea className="area" contentClassName="content">
+                <ScrollArea>
 
                     <Content itemsCount={this.state.itemsCount} />
 

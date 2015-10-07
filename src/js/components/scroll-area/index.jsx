@@ -19,18 +19,22 @@ class ScrollArea extends React.Component {
     this.bindedHandleWindowResize = this.handleWindowResize.bind(this);
   }
 
+
   componentDidMount(){
-    window.addEventListener("resize", this.bindedHandleWindowResize);
+    window.addEventListener('resize', this.bindedHandleWindowResize);
     this.setSizesToState();
   }
 
+
   componentWillUnmount(){
-    window.removeEventListener("resize", this.bindedHandleWindowResize);
+    window.removeEventListener('resize', this.bindedHandleWindowResize);
   }
+
 
   componentDidUpdate(){
     this.setSizesToState();
   }
+
 
   setHovered() {
     this.setState({
@@ -38,55 +42,11 @@ class ScrollArea extends React.Component {
     });
   }
 
+
   unsetHovered() {
     this.setState({
       isHovered: false
     });
-  }
-
-  render(){
-    var contentStyle = Object.assign(
-      {},
-      styles.__content,
-      {
-        marginTop: this.state.topPosition,
-        marginLeft: this.state.leftPosition
-      }
-    );
-
-    var scrollbarY = this.canScrollY()? (
-      <Scrollbar
-        realSize={this.state.realHeight}
-        containerSize={this.state.containerHeight}
-        position={-this.state.topPosition}
-        onMove={this.handleMove.bind(this)}
-        isContainerHovered={this.state.isHovered}
-        type="vertical"/>
-    ): null;
-
-    var scrollbarX = this.canScrollX()? (
-      <Scrollbar
-        realSize={this.state.realWidth}
-        containerSize={this.state.containerWidth}
-        position={-this.state.leftPosition}
-        onMove={this.handleMove.bind(this)}
-        isContainerHovered={this.state.isHovered}
-        type="horizontal"/>
-    ): null;
-
-    return (
-      <div
-        onMouseEnter={this.setHovered.bind(this)}
-        onMouseLeave={this.unsetHovered.bind(this)}
-        onWheel={this.handleWheel.bind(this)}
-        style={styles.block}>
-        <div ref="content" style={contentStyle}>
-          {this.props.children}
-        </div>
-        {scrollbarY}
-        {scrollbarX}
-      </div>
-    );
   }
 
 
@@ -100,6 +60,7 @@ class ScrollArea extends React.Component {
     }
     this.setState(newState);
   }
+
 
   handleWheel(e){
     var newState = this.computeSizes();
@@ -121,6 +82,7 @@ class ScrollArea extends React.Component {
     this.setState(newState);
   }
 
+
   computeTopPosition(deltaY, sizes){
     var newTopPosition = this.state.topPosition + deltaY;
 
@@ -133,6 +95,7 @@ class ScrollArea extends React.Component {
     return newTopPosition;
   }
 
+
   computeLeftPosition(deltaX, sizes){
     var newLeftPosition = this.state.leftPosition + deltaX;
     if(-newLeftPosition > sizes.realWidth - sizes.containerWidth){
@@ -143,6 +106,7 @@ class ScrollArea extends React.Component {
 
     return newLeftPosition;
   }
+
 
   handleWindowResize(){
     var newState = this.computeSizes();
@@ -158,6 +122,7 @@ class ScrollArea extends React.Component {
 
     this.setState(newState);
   }
+
 
   computeSizes(){
     var realHeight = React.findDOMNode(this.refs.content).offsetHeight;
@@ -177,6 +142,7 @@ class ScrollArea extends React.Component {
     };
   }
 
+
   setSizesToState(){
     var sizes = this.computeSizes();
     if(sizes.realHeight !== this.state.realHeight || sizes.realWidth !== this.state.realWidth){
@@ -184,25 +150,96 @@ class ScrollArea extends React.Component {
     }
   }
 
+
   scrollTop(){
     this.setState({topPosition: 0});
   }
+
 
   scrollBottom(){
     this.setState({topPosition: -(this.state.realHeight - this.state.containerHeight)});
   }
 
+
   canScrollY(state = this.state){
     return state.scrollableY && this.props.vertical;
   }
 
+
   canScrollX(state = this.state){
     return state.scrollableX && this.props.horizontal;
+  }
+
+
+  render(){
+    let {
+      style,
+      contentStyle,
+      scrollBarContainerStyle,
+      scrollBarStyle
+    } = this.props;
+
+    contentStyle = Object.assign(
+      {},
+      styles.__content,
+      {
+        marginTop: this.state.topPosition,
+        marginLeft: this.state.leftPosition
+      },
+      contentStyle
+    );
+
+    let containerStyle = Object.assign(
+      {},
+      styles.block,
+      style
+    );
+
+    var scrollbarY = this.canScrollY()? (
+      <Scrollbar
+        realSize={this.state.realHeight}
+        containerSize={this.state.containerHeight}
+        position={-this.state.topPosition}
+        onMove={this.handleMove.bind(this)}
+        isContainerHovered={this.state.isHovered}
+        style={scrollBarContainerStyle}
+        scrollBarStyle={scrollBarStyle}
+        type='vertical'/>
+    ): null;
+
+    var scrollbarX = this.canScrollX()? (
+      <Scrollbar
+        realSize={this.state.realWidth}
+        containerSize={this.state.containerWidth}
+        position={-this.state.leftPosition}
+        onMove={this.handleMove.bind(this)}
+        isContainerHovered={this.state.isHovered}
+        style={scrollBarContainerStyle}
+        scrollBarStyle={scrollBarStyle}
+        type='horizontal'/>
+    ): null;
+
+    return (
+      <div
+        onMouseEnter={this.setHovered.bind(this)}
+        onMouseLeave={this.unsetHovered.bind(this)}
+        onWheel={this.handleWheel.bind(this)}
+        style={containerStyle}>
+        <div ref='content' style={contentStyle}>
+          {this.props.children}
+        </div>
+        {scrollbarY}
+        {scrollbarX}
+      </div>
+    );
   }
 }
 
 ScrollArea.propTypes = {
-  className: React.PropTypes.string,
+  style: React.PropTypes.object,
+  contentStyle: React.PropTypes.object,
+  scrollBarContainerStyle: React.PropTypes.object,
+  scrollBarStyle: React.PropTypes.object,
   speed: React.PropTypes.number,
   contentClassName: React.PropTypes.string,
   vertical: React.PropTypes.bool,

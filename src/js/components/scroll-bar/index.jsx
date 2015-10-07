@@ -25,19 +25,23 @@ class ScrollBar extends React.Component {
     this.bindedHandleMouseUp = this.handleMouseUp.bind(this);
   }
 
+
   componentDidMount(){
     document.addEventListener('mousemove', this.bindedHandleMouseMove);
     document.addEventListener('mouseup', this.bindedHandleMouseUp);
   }
 
+
   componentWillReceiveProps(nextProps){
     this.setState(this.calculateState(nextProps));
   }
+
 
   componentWillUnmount(){
     document.removeEventListener('mousemove', this.bindedHandleMouseMove);
     document.removeEventListener('mouseup', this.bindedHandleMouseUp);
   }
+
 
   calculateState(props){
     var scrollSize = props.containerSize * props.containerSize / props.realSize;
@@ -50,11 +54,13 @@ class ScrollBar extends React.Component {
     };
   }
 
+
   setHovered() {
     this.setState({
       isHovered: true
     });
   }
+
 
   unsetHovered() {
     this.setState({
@@ -62,7 +68,68 @@ class ScrollBar extends React.Component {
     });
   }
 
+
+  handleMouseMoveForHorizontal(e){
+    var multiplier = this.props.containerSize / this.props.realSize;
+    if(this.state.isDragging){
+      e.preventDefault();
+      var deltaX = this.state.lastClientPosition - e.clientX;
+      this.setState({ lastClientPosition: e.clientX });
+      this.props.onMove(0, deltaX / multiplier);
+    }
+  }
+
+
+  handleMouseMoveForVertical(e){
+    var multiplier = this.props.containerSize / this.props.realSize;
+    if(this.state.isDragging){
+      e.preventDefault();
+      var deltaY = this.state.lastClientPosition - e.clientY;
+      this.setState({ lastClientPosition: e.clientY });
+      this.props.onMove(deltaY / multiplier, 0);
+    }
+  }
+
+
+  handleMouseDown(e){
+    var lastClientPosition = this.props.type === 'vertical'? e.clientY: e.clientX
+    this.setState({isDragging: true, lastClientPosition: lastClientPosition });
+  }
+
+
+  handleMouseUp(e){
+    this.setState({isDragging: false });
+  }
+
+
+  createScrollStyles(){
+    if(this.props.type === 'vertical'){
+      return Object.assign(
+        {},
+        styles.__scrollbar_vertical,
+        {
+          height: this.state.scrollSize,
+          marginTop: this.state.position
+        });
+    } else {
+      return Object.assign(
+        {},
+        styles.__scrollbar_horizontal,
+        {
+          width: this.state.scrollSize,
+          marginLeft: this.state.position
+        }
+      );
+    }
+  }
+
+
   render(){
+    let {
+      style,
+      scrollBarStyle
+    } = this.props;
+
     let scrollStyle = this.createScrollStyles();
 
     let containerStyle = styles.block;
@@ -99,6 +166,18 @@ class ScrollBar extends React.Component {
       );
     }
 
+    containerStyle = Object.assign(
+      {},
+      containerStyle,
+      style
+    );
+
+    scrollStyle = Object.assign(
+      {},
+      scrollStyle,
+      scrollBarStyle
+    );
+
     return (
       <div
         onMouseEnter={this.setHovered.bind(this)}
@@ -111,59 +190,11 @@ class ScrollBar extends React.Component {
       </div>
     );
   }
-
-  handleMouseMoveForHorizontal(e){
-    var multiplier = this.props.containerSize / this.props.realSize;
-    if(this.state.isDragging){
-      e.preventDefault();
-      var deltaX = this.state.lastClientPosition - e.clientX;
-      this.setState({ lastClientPosition: e.clientX });
-      this.props.onMove(0, deltaX / multiplier);
-    }
-  }
-
-  handleMouseMoveForVertical(e){
-    var multiplier = this.props.containerSize / this.props.realSize;
-    if(this.state.isDragging){
-      e.preventDefault();
-      var deltaY = this.state.lastClientPosition - e.clientY;
-      this.setState({ lastClientPosition: e.clientY });
-      this.props.onMove(deltaY / multiplier, 0);
-    }
-  }
-
-  handleMouseDown(e){
-    var lastClientPosition = this.props.type === 'vertical'? e.clientY: e.clientX
-    this.setState({isDragging: true, lastClientPosition: lastClientPosition });
-  }
-
-  handleMouseUp(e){
-    this.setState({isDragging: false });
-  }
-
-  createScrollStyles(){
-    if(this.props.type === 'vertical'){
-      return Object.assign(
-        {},
-        styles.__scrollbar_vertical,
-        {
-          height: this.state.scrollSize,
-          marginTop: this.state.position
-        });
-    } else {
-      return Object.assign(
-        {},
-        styles.__scrollbar_horizontal,
-        {
-          width: this.state.scrollSize,
-          marginLeft: this.state.position
-        }
-      );
-    }
-  }
 }
 
 ScrollBar.propTypes = {
+  style: React.PropTypes.object,
+  scrollBarStyle: React.PropTypes.object,
   onMove: React.PropTypes.func,
   realSize: React.PropTypes.number,
   containerSize: React.PropTypes.number,
