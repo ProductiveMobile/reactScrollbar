@@ -1,0 +1,51 @@
+{
+  "preset": "airbnb",
+  "esnext": true,
+  "disallowMultipleLineBreaks": null,
+  "requirePaddingNewLinesAfterBlocks": null,
+  "requireCamelCaseOrUpperCaseIdentifiers": null,
+  "requireTrailingComma": null,
+  "maximumLineLength": {
+    "value": 80,
+    "allowUrlComments": true
+  },
+  "jsDoc": {
+    "checkAnnotations": {
+      "preset": "closurecompiler",
+      "extra": {
+        "abstract": true,
+        "callback": true,
+        "todo": true
+      }
+    },
+    "checkParamNames": true,
+    "requireParamTypes": true,
+    "checkReturnTypes": true,
+    "checkRedundantReturns": true,
+    "requireReturnTypes": true,
+    "checkTypes": "capitalizedNativeCase",
+    "checkRedundantAccess": true,
+    "requireNewlineAfterDescription": true
+  },
+  "fileExtensions": [
+    ".js",
+    ".jsx"
+  ],
+  "excludeFiles": [
+    ".firefox-profile/**",
+    ".firefox-integration-profile/**",
+    "dist/**",
+    "node_modules/**",
+    "test/react-phantomjs-shims.js",
+    "addon/lib/**",
+    "addon/bootstrap.js",
+    "addon/data/build/**",
+    "addon/test/main.js",
+    "addon/bootstrap.js",
+    "tasks/data/**",
+    "backend/coverage/**",
+    "app-engine/dist/**",
+    "app-engine/**/demo/example-data.js",
+    "elements/utils/modernizr.custom.js"
+  ]
+}
