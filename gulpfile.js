@@ -5,55 +5,57 @@ var less = require('gulp-less');
 var webpackConf = require('./webpack.config.js');
 var babel = require('gulp-babel');
 var connect = require('gulp-connect');
+var eslint = require('gulp-eslint');
+var jscs = require('gulp-jscs');
 
-gulp.task("webpack", function() {
-    return gulp.src('./examples/**/js/main.js')
-        .pipe(webpack( webpackConf ))
-        .pipe(concat('main.js'))
-        .pipe(gulp.dest('../'))
-        .pipe(connect.reload());
+var DEMO_PATH = 'examples/basic';
+var SOURCE_PATH = 'src';
+
+gulp.task('webpack', function () {
+  return gulp.src(DEMO_PATH + '/js/main.js')
+    .pipe(webpack( webpackConf ))
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest(DEMO_PATH))
+    .pipe(connect.reload());
 });
 
-gulp.task('build-less', function(){
-    return gulp.src('./src/less/**/*.less')
-        .pipe(less())
-        .pipe(gulp.dest('./dist/css'))
-        .pipe(connect.reload());
+gulp.task('build-less-examples', function () {
+  return gulp.src(DEMO_PATH + '/less/**/*.less')
+    .pipe(less())
+    .pipe(gulp.dest(DEMO_PATH))
+    .pipe(connect.reload());
 });
 
-gulp.task('build-less-example', function(){
-    return gulp.src('./examples/**/less/**/*.less')
-        .pipe(less())
-        .pipe(gulp.dest('../'))
-        .pipe(connect.reload());
+gulp.task('connect', function () {
+  connect.server({
+    root: DEMO_PATH,
+    livereload: true,
+    port: 8003
+    });
 });
 
-gulp.task("connect", function(){
-    connect.server({
-        root: 'dist',
-        livereload: true,
-        port: 8003
-      });
+gulp.task('lint', ['lint:jscs', 'lint:eslint']);
+
+gulp.task('lint:jscs', function () {
+  return gulp.src(SOURCE_PATH).pipe(jscs());
 });
 
-gulp.task('babel', function(){
-    return gulp.src('src/js/*.*')
-        .pipe(babel({modules: 'umd'}))
-        .pipe(gulp.dest('dist'));
+gulp.task('lint:eslint', function () {
+  return gulp.src(SOURCE_PATH)
+    .pipe(eslint())
+    .pipe(eslint.format('stylish'))
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task('build', ['build-less', 'copy']);
+gulp.task('default', ['build-less-examples', 'webpack']);
 
-gulp.task('default', ['build-less', 'babel', 'build-less-example', 'webpack']);
-
-gulp.task('watch', function() {
-    connect.server({
-       root: 'examples/basic',
-       livereload: true,
-       port: 8003
-     });
-    gulp.watch('src/**/*.less', ['build-less']);
-    gulp.watch(['src/**/*.js', 'src/**/*.jsx'], ['babel', 'webpack']);
-    gulp.watch(['examples/**/js/**/*.js', 'examples/**/*.jsx'], ['webpack']);
-    gulp.watch('examples/**/*.less', ['build-less-example']);
+gulp.task('watch', function () {
+  connect.server({
+     root: DEMO_PATH,
+     livereload: true,
+     port: 8003
+   });
+  gulp.watch(['src/js/**/*.js', 'src/js/**/*.jsx'], ['webpack']);
+  gulp.watch([DEMO_PATH + '/js/**/*'], ['webpack']);
+  gulp.watch(DEMO_PATH + '/less/**/*', ['build-less-demo']);
 });
