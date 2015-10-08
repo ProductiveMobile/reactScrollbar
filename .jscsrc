@@ -30,22 +30,5 @@
   "fileExtensions": [
     ".js",
     ".jsx"
-  ],
-  "excludeFiles": [
-    ".firefox-profile/**",
-    ".firefox-integration-profile/**",
-    "dist/**",
-    "node_modules/**",
-    "test/react-phantomjs-shims.js",
-    "addon/lib/**",
-    "addon/bootstrap.js",
-    "addon/data/build/**",
-    "addon/test/main.js",
-    "addon/bootstrap.js",
-    "tasks/data/**",
-    "backend/coverage/**",
-    "app-engine/dist/**",
-    "app-engine/**/demo/example-data.js",
-    "elements/utils/modernizr.custom.js"
   ]
 }
