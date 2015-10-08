@@ -1,39 +1,39 @@
 import React from 'react'
 
-import ScrollArea from '../../../dist/scrollArea.js';
+import ScrollArea from '../../../src/js/components/scroll-area';
 
 class App extends React.Component{
-    constructor(props){
-        super(props);
+  constructor(props){
+    super(props);
 
-        this.state = {
-            itemsCount : 10
-        };
+    this.state = {
+      itemsCount : 10
+    };
+  }
+
+
+  handleAddClick(){
+    this.setState({itemsCount: this.state.itemsCount + 10});
+  }
+
+  render() {
+    var itemElements = [];
+
+    for( var i = 0; i< this.state.itemsCount; i++){
+      itemElements.push(<div className='item'>item {i}</div>);
     }
 
+    return (
+      <div className='area'>
+        <ScrollArea>
+          <div className='content'>
+            {itemElements}
+          </div>
+        </ScrollArea>
 
-    handleAddClick(){
-        this.setState({itemsCount: this.state.itemsCount + 10});
-    }
-
-    render() {
-        var itemElements = [];
-
-        for( var i = 0; i< this.state.itemsCount; i++){
-            itemElements.push(<div className="item">item {i}</div>);
-        }
-
-        return (
-            <div>
-                <ScrollArea className="area" contentClassName="content">
-
-                    {itemElements}
-
-                </ScrollArea>
-
-            </div>
-        );
-    }
+      </div>
+    );
+  }
 }
 
 

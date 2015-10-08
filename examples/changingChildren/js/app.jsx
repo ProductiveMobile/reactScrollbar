@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ScrollArea from '../../../dist/scrollArea.js'; 
+import ScrollArea from '../../../src/js/components/scroll-area';
 
 class App extends React.Component{
     constructor(props){
@@ -19,7 +19,7 @@ class App extends React.Component{
     render() {
         return (
             <div>
-                <ScrollArea className="area" contentClassName="content">
+                <ScrollArea>
 
                     <Content itemsCount={this.state.itemsCount} />
 
