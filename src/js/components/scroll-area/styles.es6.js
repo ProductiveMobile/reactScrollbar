@@ -7,11 +7,12 @@ export default {
     height: '100%'
   },
 
-
   __content: {
     margin: 0,
     padding: 0,
-    overflow: 'hidden',
-    position: 'absolute'
+    width: '100%',
+    position: 'relative',
+    overflow: 'visible',
+    display: 'table'
   }
 };

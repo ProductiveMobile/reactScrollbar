@@ -54,7 +54,7 @@ class ScrollArea extends React.Component {
 
 
   handleMove(deltaY, deltaX) {
-    var newState = this.computeSizes();
+    let newState = this.computeSizes();
     if (this.canScrollY(newState)) {
       newState.topPosition = this.computeTopPosition(deltaY, newState);
     }
@@ -66,9 +66,9 @@ class ScrollArea extends React.Component {
 
 
   handleWheel(e) {
-    var newState = this.computeSizes();
-    var deltaY = e.deltaY * this.props.speed;
-    var deltaX = e.deltaX * this.props.speed;
+    let newState = this.computeSizes();
+    let deltaY = e.deltaY * this.props.speed;
+    let deltaX = e.deltaX * this.props.speed;
 
     if (this.canScrollY(newState)) {
       newState.topPosition = this.computeTopPosition(-deltaY, newState);
@@ -87,7 +87,7 @@ class ScrollArea extends React.Component {
 
 
   computeTopPosition(deltaY, sizes) {
-    var newTopPosition = this.state.topPosition + deltaY;
+    let newTopPosition = this.state.topPosition + deltaY;
 
     if (-newTopPosition > sizes.realHeight - sizes.containerHeight) {
       newTopPosition = -(sizes.realHeight - sizes.containerHeight);
@@ -100,7 +100,7 @@ class ScrollArea extends React.Component {
 
 
   computeLeftPosition(deltaX, sizes) {
-    var newLeftPosition = this.state.leftPosition + deltaX;
+    let newLeftPosition = this.state.leftPosition + deltaX;
     if (-newLeftPosition > sizes.realWidth - sizes.containerWidth) {
       newLeftPosition = -(sizes.realWidth - sizes.containerWidth);
     } else if (newLeftPosition > 0) {
@@ -112,13 +112,13 @@ class ScrollArea extends React.Component {
 
 
   handleWindowResize() {
-    var newState = this.computeSizes();
-    var bottomPosition = newState.realHeight - newState.containerHeight;
+    let newState = this.computeSizes();
+    let bottomPosition = newState.realHeight - newState.containerHeight;
     if (-this.state.topPosition >= bottomPosition) {
       newState.topPosition = this.canScrollY(newState)? -bottomPosition: 0;
     }
 
-    var rightPosition = newState.realWidth - newState.containerWidth;
+    let rightPosition = newState.realWidth - newState.containerWidth;
     if (-this.state.leftPosition >= rightPosition) {
       newState.leftPosition = this.canScrollX(newState)? -rightPosition: 0;
     }
@@ -128,13 +128,13 @@ class ScrollArea extends React.Component {
 
 
   computeSizes() {
-    var realHeight = this.contentNode.offsetHeight;
-    var containerHeight = React.findDOMNode(this).offsetHeight;
-    var realWidth = this.contentNode.offsetWidth;
-    var containerWidth = React.findDOMNode(this).offsetWidth;
-    var scrollableY = realHeight > containerHeight ||
+    let realHeight = this.contentNode.offsetHeight;
+    let containerHeight = React.findDOMNode(this).offsetHeight;
+    let realWidth = this.contentNode.offsetWidth;
+    let containerWidth = React.findDOMNode(this).offsetWidth;
+    let scrollableY = realHeight > containerHeight ||
       this.state.topPosition !== 0;
-    var scrollableX = realWidth > containerWidth ||
+    let scrollableX = realWidth > containerWidth ||
       this.state.leftPosition !== 0;
 
     return {
@@ -149,7 +149,7 @@ class ScrollArea extends React.Component {
 
 
   setSizesToState() {
-    var sizes = this.computeSizes();
+    let sizes = this.computeSizes();
     if (sizes.realHeight !== this.state.realHeight || sizes.realWidth !== this.state.realWidth) {
       this.setState(sizes);
     }
@@ -203,8 +203,6 @@ class ScrollArea extends React.Component {
       styles.block,
       style
     );
-
-
 
     let scrollbarY = this.canScrollY()? (
       <Scrollbar
