@@ -71,7 +71,7 @@ class ScrollBar extends React.Component {
 
   handleMouseMoveForHorizontal(e){
     var multiplier = this.props.containerSize / this.props.realSize;
-    if(this.state.isDragging){
+    if (this.state.isDragging) {
       e.preventDefault();
       var deltaX = this.state.lastClientPosition - e.clientX;
       this.setState({ lastClientPosition: e.clientX });
@@ -82,7 +82,7 @@ class ScrollBar extends React.Component {
 
   handleMouseMoveForVertical(e){
     var multiplier = this.props.containerSize / this.props.realSize;
-    if(this.state.isDragging){
+    if (this.state.isDragging) {
       e.preventDefault();
       var deltaY = this.state.lastClientPosition - e.clientY;
       this.setState({ lastClientPosition: e.clientY });
@@ -92,18 +92,20 @@ class ScrollBar extends React.Component {
 
 
   handleMouseDown(e){
-    var lastClientPosition = this.props.type === 'vertical'? e.clientY: e.clientX
+    var lastClientPosition = this.props.type === 'vertical'?
+      e.clientY :
+      e.clientX;
     this.setState({isDragging: true, lastClientPosition: lastClientPosition });
   }
 
 
-  handleMouseUp(e){
+  handleMouseUp(){
     this.setState({isDragging: false });
   }
 
 
   createScrollStyles(){
-    if(this.props.type === 'vertical'){
+    if (this.props.type === 'vertical') {
       return Object.assign(
         {},
         styles.__scrollbar_vertical,
@@ -205,5 +207,6 @@ ScrollBar.propTypes = {
 
 ScrollBar.defaultProps = {
   type : 'vertical'
-}
+};
+
 export default ScrollBar;

@@ -9,7 +9,7 @@ var eslint = require('gulp-eslint');
 var jscs = require('gulp-jscs');
 
 var DEMO_PATH = 'examples/basic';
-var SOURCE_PATH = 'src';
+var SOURCE_PATH = 'src/**/*';
 
 gulp.task('webpack', function () {
   return gulp.src(DEMO_PATH + '/js/main.js')
