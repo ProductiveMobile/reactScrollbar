@@ -1,12 +1,12 @@
 module.exports = {
   resolve: {
     modulesDirectories: ['node_modules', 'bower_components'],
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.es6.js', '.jsx']
   },
   module: {
     loaders: [
-      { test: /\.js|\.jsx$/, exclude: /node_modules/, loader: 'babel-loader'}
+      { test: /(\.es6)?\.js|\.jsx$/, exclude: /node_modules/, loader: 'babel-loader'}
     ]
   },
-  devtool: "inline-source-map"
+  devtool: 'inline-source-map'
 };
