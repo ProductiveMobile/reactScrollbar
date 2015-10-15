@@ -1,6 +1,6 @@
 {
   "name": "react-scrollbar",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "ScrollArea component for react",
   "main": "src/js/components/scroll-area/index.jsx",
   "scripts": {
