@@ -65,10 +65,10 @@ class ScrollArea extends React.Component {
   }
 
 
-  handleWheel(e) {
+  getStateDiff(deltaX, deltaY) {
     let newState = this.computeSizes();
-    let deltaY = e.deltaY * this.props.speed;
-    let deltaX = e.deltaX * this.props.speed;
+    deltaY = deltaY * this.props.speed;
+    deltaX = deltaX * this.props.speed;
 
     if (this.canScrollY(newState)) {
       newState.topPosition = this.computeTopPosition(-deltaY, newState);
@@ -78,11 +78,23 @@ class ScrollArea extends React.Component {
       newState.leftPosition = this.computeLeftPosition(-deltaX, newState);
     }
 
+    return newState;
+  }
+
+
+  handleWheel(e) {
+    let newState = this.getStateDiff(e.deltaX, e.deltaY);
+
     if (this.state.topPosition !== newState.topPosition || this.state.leftPosition !== newState.leftPosition) {
       e.preventDefault();
     }
 
     this.setState(newState);
+  }
+
+
+  scrollBy(deltaX = 0, deltaY = 0) {
+    this.setState(this.getStateDiff(deltaX, deltaY));
   }
 
 
