@@ -24,17 +24,29 @@ class ScrollArea extends React.Component {
 
 
   componentDidMount() {
+    if (this.props.disabled) {
+      return;
+    }
+
     window.addEventListener('resize', this.bindedHandleWindowResize);
     this.setSizesToState();
   }
 
 
   componentWillUnmount() {
+    if (this.props.disabled) {
+      return;
+    }
+
     window.removeEventListener('resize', this.bindedHandleWindowResize);
   }
 
 
   componentDidUpdate() {
+    if (this.props.disabled) {
+      return;
+    }
+
     this.setSizesToState();
   }
 
@@ -197,8 +209,14 @@ class ScrollArea extends React.Component {
       style,
       contentStyle,
       scrollBarContainerStyle,
-      scrollBarStyle
+      scrollBarStyle,
+      disabled,
+      children
     } = this.props;
+
+    if (disabled) {
+      return children;
+    }
 
     contentStyle = Object.assign(
       {},
@@ -247,7 +265,7 @@ class ScrollArea extends React.Component {
         onWheel={this.handleWheel.bind(this)}
         style={containerStyle}>
         <div ref={this.onContentMount.bind(this)} style={contentStyle}>
-          {this.props.children}
+          {children}
         </div>
         {scrollbarY}
         {scrollbarX}
@@ -265,7 +283,8 @@ ScrollArea.propTypes = {
   contentClassName: React.PropTypes.string,
   vertical: React.PropTypes.bool,
   horizontal: React.PropTypes.bool,
-  children: React.PropTypes.element
+  children: React.PropTypes.element,
+  disabled: React.PropTypes.bool
 };
 
 ScrollArea.defaultProps = {
