@@ -1,5 +1,6 @@
 import React from 'react/addons';
 import Scrollbar from '../scroll-bar';
+import {Spring} from 'react-motion';
 import styles from './styles';
 
 class ScrollArea extends React.Component {
@@ -61,6 +62,14 @@ class ScrollArea extends React.Component {
     if (this.canScrollX(newState)) {
       newState.leftPosition = this.computeLeftPosition(deltaX, newState);
     }
+
+    if (typeof this.props.onScroll === 'function'){
+      this.props.onScroll({
+        top: newState.topPosition,
+        left: newState.leftPosition
+      });
+    }
+
     this.setState(newState);
   }
 
@@ -84,12 +93,21 @@ class ScrollArea extends React.Component {
 
   handleWheel(e) {
     let newState = this.getStateDiff(e.deltaX, e.deltaY);
+    this.setState(newState);
 
-    if (this.state.topPosition !== newState.topPosition || this.state.leftPosition !== newState.leftPosition) {
-      e.preventDefault();
+    let maxTopPosition = this.state.containerHeight - this.state.realHeight;
+
+    if (newState.topPosition !== 0 &&
+      newState.topPosition !== maxTopPosition) {
+      e.stopPropagation();
     }
 
-    this.setState(newState);
+    if (typeof this.props.onScroll === 'function'){
+      this.props.onScroll({
+        top: newState.topPosition,
+        left: newState.leftPosition
+      });
+    }
   }
 
 
@@ -197,18 +215,9 @@ class ScrollArea extends React.Component {
       style,
       contentStyle,
       scrollBarContainerStyle,
-      scrollBarStyle
+      scrollBarStyle,
+      children
     } = this.props;
-
-    contentStyle = Object.assign(
-      {},
-      styles.__content,
-      {
-        marginTop: this.state.topPosition,
-        marginLeft: this.state.leftPosition
-      },
-      contentStyle
-    );
 
     let containerStyle = Object.assign(
       {},
@@ -216,42 +225,86 @@ class ScrollArea extends React.Component {
       style
     );
 
-    let scrollbarY = this.canScrollY()? (
-      <Scrollbar
-        realSize={this.state.realHeight}
-        containerSize={this.state.containerHeight}
-        position={-this.state.topPosition}
-        onMove={this.handleMove.bind(this)}
-        isContainerHovered={this.state.isHovered}
-        style={scrollBarContainerStyle}
-        scrollBarStyle={scrollBarStyle}
-        type='vertical'/>
-    ) : null;
+    let scrollbarY = ({topPosition}) => {
+      return this.canScrollY()? (
+          <Scrollbar
+            realSize={this.state.realHeight}
+            containerSize={this.state.containerHeight}
+            position={-topPosition.val}
+            onMove={this.handleMove.bind(this)}
+            isContainerHovered={this.state.isHovered}
+            style={scrollBarContainerStyle}
+            scrollBarStyle={scrollBarStyle}
+            type='vertical'/> ) : null;
+      }
 
-    let scrollbarX = this.canScrollX()? (
-      <Scrollbar
-        realSize={this.state.realWidth}
-        containerSize={this.state.containerWidth}
-        position={-this.state.leftPosition}
-        onMove={this.handleMove.bind(this)}
-        isContainerHovered={this.state.isHovered}
-        style={scrollBarContainerStyle}
-        scrollBarStyle={scrollBarStyle}
-        type='horizontal'/>
-    ) : null;
+    let scrollbarX = ({leftPosition}) => {
+      return this.canScrollX()? (
+        <Scrollbar
+          realSize={this.state.realWidth}
+          containerSize={this.state.containerWidth}
+          position={-leftPosition.val}
+          onMove={this.handleMove.bind(this)}
+          isContainerHovered={this.state.isHovered}
+          style={scrollBarContainerStyle}
+          scrollBarStyle={scrollBarStyle}
+          type='horizontal'/>
+      ) : null;
+    }
+
+    let renderContent = ({topPosition, leftPosition}) => {
+      contentStyle = Object.assign(
+        {},
+        styles.__content,
+        {
+          transform: `translateX(${this.state.leftPosition}px)
+            translateY(${this.state.topPosition}px)`
+        },
+        contentStyle
+      );
+
+      return (
+        <div ref={this.onContentMount.bind(this)} style={contentStyle}>
+          {children}
+        </div>
+      );
+    }
+
+
+    let transitionDefaultValue ={
+      topPosition: {
+        val: 0
+      },
+      leftPosition: {
+        val: 0
+      }
+    };
+
+    let transitionEndValue ={
+      topPosition: {
+        val: this.state.topPosition
+      },
+      leftPosition: {
+        val: this.state.leftPosition
+      }
+    };
 
     return (
-      <div
-        onMouseEnter={this.setHovered.bind(this)}
-        onMouseLeave={this.unsetHovered.bind(this)}
-        onWheel={this.handleWheel.bind(this)}
-        style={containerStyle}>
-        <div ref={this.onContentMount.bind(this)} style={contentStyle}>
-          {this.props.children}
-        </div>
-        {scrollbarY}
-        {scrollbarX}
-      </div>
+      <Spring
+      defaultValue={transitionDefaultValue}
+      endValue={transitionEndValue}>
+        {interpolated =>
+          <div
+            onMouseEnter={this.setHovered.bind(this)}
+            onMouseLeave={this.unsetHovered.bind(this)}
+            onWheel={this.handleWheel.bind(this)}
+            style={containerStyle}>
+            {renderContent(interpolated)}
+            {scrollbarY(interpolated)}
+            {scrollbarX(interpolated)}
+          </div>
+        }
+      </Spring>
     );
   }
 }
